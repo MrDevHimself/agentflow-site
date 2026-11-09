@@ -5,11 +5,11 @@ import Nav from "../components/Nav.astro";
 <Base title="Page not found · AgentFlow">
   <Nav />
   <main class="wrap nf">
-    <h1>This page doesn't exist.</h1>
+    <h1 class="display">This page doesn't exist.</h1>
     <p class="lede">The link may be old or mistyped. Head back to the home page or book a call.</p>
     <div class="ctas">
-      <a class="btn btn-primary" href="/">Go to the home page</a>
-      <a class="btn btn-ghost" href="/pitch">Book a call</a>
+      <a class="btn" href="/">Go to the home page</a>
+      <a class="ghost" href="/pitch">Book a call</a>
     </div>
   </main>
 </Base>
@@ -17,5 +17,6 @@ import Nav from "../components/Nav.astro";
 <style>
   .nf { padding-block: clamp(5rem, 14vw, 10rem); }
   .nf .lede { margin: 1.25rem 0 2rem; }
-  .ctas { display: flex; flex-wrap: wrap; gap: .75rem; }
+  .ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; }
+  .ghost { font-weight: 700; text-underline-offset: 4px; }
 </style>

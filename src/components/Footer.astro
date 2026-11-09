@@ -1,47 +1,21 @@
 ---
-import Logo from "./Logo.astro";
 const year = new Date().getFullYear();
 ---
 <footer>
-  <div class="wrap grid">
-    <div>
-      <Logo />
-      <p class="muted blurb">Done-for-you marketing that books qualified listing appointments for full-time real estate agents.</p>
-    </div>
-    <div>
-      <h4>Pages</h4>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/services">Services</a></li>
-        <li><a href="/pitch">Book a call</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Contact</h4>
-      <ul>
-        <li><a href="mailto:theagentflowmedia@gmail.com">theagentflowmedia@gmail.com</a></li>
-        <li><a href="https://wa.me/264816780891" target="_blank" rel="noopener">WhatsApp +264 81 678 0891</a></li>
-        <li class="muted">Monday to Friday, 9am to 5pm</li>
-      </ul>
-    </div>
-  </div>
-  <div class="wrap legal muted">
+  <div class="wrap row">
     <span>© {year} AgentFlow Media, Namibia</span>
-    <span class="links"><a href="/privacy">Privacy policy</a><a href="/terms">Terms of use</a></span>
+    <nav aria-label="Footer">
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:theagentflowmedia@gmail.com">Email</a>
+      <a href="https://wa.me/264816780891" target="_blank" rel="noopener">WhatsApp</a>
+    </nav>
   </div>
 </footer>
 
 <style>
-  footer { border-top: 1px solid var(--line); padding-top: 3.5rem; }
-  .grid { display: grid; gap: 2.5rem; grid-template-columns: 1.6fr 1fr 1.3fr; }
-  .blurb { margin-top: 1rem; max-width: 22rem; font-size: .95rem; }
-  h4 { margin: 0 0 .9rem; font-size: .95rem; font-weight: 650; }
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; font-size: .95rem; }
-  ul a { color: var(--muted); text-decoration: none; overflow-wrap: anywhere; }
-  ul a:hover { color: var(--text); }
-  .legal { padding-block: 2.5rem 2rem; font-size: .85rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem 1.5rem; }
-  .links { display: flex; gap: 1.5rem; }
-  .links a { color: var(--muted); text-underline-offset: 3px; }
-  .links a:hover { color: var(--text); }
-  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--grey); font-size: .9rem; }
+  .row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; }
+  nav { display: flex; flex-wrap: wrap; gap: 20px; }
+  a:hover { color: var(--ink); }
 </style>

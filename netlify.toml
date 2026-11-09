@@ -6,7 +6,18 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# Old links that should still land somewhere useful
+[[redirects]]
+  from = "/services"
+  to = "/"
+  status = 301
+
 [[redirects]]
   from = "/thankyou"
-  to = "/thank-you"
+  to = "/pitch"
+  status = 301
+
+[[redirects]]
+  from = "/thank-you"
+  to = "/pitch"
   status = 301

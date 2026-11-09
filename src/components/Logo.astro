@@ -1,18 +1,18 @@
 ---
-interface Props { size?: number; wordmark?: boolean; knockout?: string }
-const { size = 30, wordmark = true, knockout = "var(--night)" } = Astro.props;
+interface Props { size?: number; wordmark?: boolean }
+const { size = 28, wordmark = true } = Astro.props;
 ---
 <span class="logo">
   <svg width={size} height={size} viewBox="8 10 50 44" aria-hidden="true">
-    <path d="M10 50 L28 14 L46 50" fill="none" stroke="var(--amber)" stroke-width="6" stroke-linecap="round" stroke-linejoin="miter" />
-    <path d="M38 38 C42.5 38 45 31 50 28" fill="none" stroke={knockout} stroke-width="12" />
-    <path d="M17 38 H35 C42 38 44.5 31 50 28" fill="none" stroke="var(--amber)" stroke-width="6" stroke-linecap="round" />
-    <circle cx="52.5" cy="26.6" r="5" fill="var(--amber)" />
+    <path d="M10 50 L28 14 L46 50" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="miter" />
+    <path d="M38 38 C42.5 38 45 31 50 28" fill="none" stroke="var(--paper)" stroke-width="12" />
+    <path d="M17 38 H35 C42 38 44.5 31 50 28" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" />
+    <circle cx="52.5" cy="26.6" r="5" fill="var(--ink)" />
   </svg>
   {wordmark && <span class="word">AgentFlow</span>}
 </span>
 
 <style>
-  .logo { display: inline-flex; align-items: center; gap: .6rem; }
-  .word { font-weight: 750; font-size: 1.2rem; letter-spacing: -0.035em; color: var(--text); }
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .word { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.035em; }
 </style>

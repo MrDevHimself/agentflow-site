@@ -6,14 +6,15 @@ Built with [Astro](https://astro.build). Hosted on Netlify. **Every `git push` t
 
 | What | Where |
 | --- | --- |
-| Home page | `src/pages/index.astro` |
-| Services page | `src/pages/services.astro` |
-| Booking page (EstateKit embed) | `src/pages/pitch.astro` |
-| Thank-you page (WhatsApp number lives here) | `src/pages/thank-you.astro` |
-| Nav / footer | `src/components/Nav.astro`, `src/components/Footer.astro` |
+| Home page | `src/pages/index.astro` (the lists at the top of the file hold the services, video and steps) |
+| Booking page (Google Calendar embed + WhatsApp) | `src/pages/pitch.astro` |
+| Privacy policy / Terms | `src/pages/privacy.astro`, `src/pages/terms.astro` |
+| Header / footer | `src/components/Nav.astro`, `src/components/Footer.astro` |
 | Logo | `src/components/Logo.astro` and `public/favicon.svg` |
-| Hero calendar | `src/components/WeekCalendar.astro` |
+| Icons | `src/components/Icon.astro` |
 | Colours & fonts | `src/styles/global.css` (the `:root` block at the top) |
+
+Old links `/services`, `/thank-you` and `/thankyou` redirect in `netlify.toml`.
 
 Most text is either written straight into the HTML or in a small list at the top of each page file.
 

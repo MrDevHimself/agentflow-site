@@ -18,13 +18,13 @@ const { title, description, updated } = Astro.props;
 
 <style>
   .legal { max-width: 760px; padding-block: clamp(3rem, 8vw, 5.5rem) clamp(4rem, 9vw, 6rem); }
-  .legal h1 { font-size: clamp(2.3rem, 5vw, 3.4rem); }
-  .updated { color: var(--muted); margin-top: .9rem; }
+  .legal h1 { font-size: clamp(2.3rem, 5vw, 3.4rem); line-height: 1.04; letter-spacing: -0.04em; font-weight: 800; }
+  .updated { color: var(--grey); margin-top: .9rem; }
   .prose { margin-top: 2.5rem; }
-  .prose :global(h2) { font-size: 1.45rem; letter-spacing: -0.02em; margin: 2.75rem 0 .8rem; }
-  .prose :global(p), .prose :global(li) { color: #C9D1DE; }
+  .prose :global(h2) { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; margin: 2.75rem 0 .8rem; }
+  .prose :global(p), .prose :global(li) { color: #333; }
   .prose :global(p + p) { margin-top: 1rem; }
   .prose :global(ul) { padding-left: 1.2rem; margin: .8rem 0; display: grid; gap: .45rem; }
-  .prose :global(a) { color: var(--amber); text-underline-offset: 3px; }
-  .prose :global(strong) { color: var(--text); }
+  .prose :global(a) { color: var(--ink); text-underline-offset: 3px; }
+  .prose :global(strong) { color: var(--ink); }
 </style>
