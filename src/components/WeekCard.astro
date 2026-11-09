@@ -1,0 +1,41 @@
+---
+// Small "this week" card in the top right of the homepage.
+// Blocks: day (0-4), start row, length in rows, kind (s = seller, b = buyer, l = listing)
+const appts = [
+  [0, 0.5, 1, "s"], [0, 4, 1, "b"], [1, 2, 1.5, "l"], [2, 1, 1, "b"], [2, 5, 1, "s"],
+  [3, 0, 1, "s"], [3, 3.5, 1.5, "l"], [4, 1.5, 1, "b"], [4, 5.5, 1, "s"],
+] as const;
+---
+<figure class="cal" aria-label="Example week with 9 booked appointments">
+  <div class="head" aria-hidden="true"><strong>This week</strong><span><b>{appts.length}</b> booked</span></div>
+  <div class="grid" aria-hidden="true">
+    {["M", "T", "W", "T", "F"].map((d) => <em>{d}</em>)}
+    <div class="body">
+      {[0, 1, 2, 3, 4].map(() => <u></u>)}
+      {appts.map(([d, s, l, k], i) => <div class={`ap ${k}`} style={`--d:${d};--s:${s};--l:${l};--i:${i}`}></div>)}
+    </div>
+  </div>
+  <figcaption class="key"><span><i class="s"></i>Seller</span><span><i class="b"></i>Buyer</span><span><i class="l"></i>Listing</span></figcaption>
+</figure>
+
+<style>
+  .cal { margin: 10px 0 0; border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 12px; background: var(--paper); }
+  .head { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 10px; font-size: .9rem; }
+  .head span { color: var(--grey); font-size: .8rem; }
+  .head b { color: var(--ink); }
+  .grid { --row: 17px; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: auto calc(var(--row) * 8); }
+  em { font-style: normal; font-size: .68rem; color: #767676; text-align: center; padding-bottom: 6px; }
+  .body { grid-column: 1 / -1; position: relative; display: grid; grid-template-columns: repeat(5, 1fr); background-image: linear-gradient(var(--line) 1px, transparent 1px); background-size: 100% calc(var(--row) * 2); border-bottom: 1px solid var(--line); }
+  u { border-left: 1px solid var(--line); }
+  u:first-child { border-left: 0; }
+  .ap { position: absolute; left: calc(var(--d) * 20% + 3px); width: calc(20% - 6px); top: calc(var(--s) * var(--row) + 2px); height: calc(var(--l) * var(--row) - 3px); border-radius: 4px; animation: book .4s ease-out both; animation-delay: calc(.3s + var(--i) * .12s); }
+  .s { background: var(--ink); }
+  .b { background: var(--paper); border: 1.5px solid var(--ink); }
+  .l { background: #dcdcdc; }
+  @keyframes book { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+  .key { display: flex; gap: 12px; padding-top: 10px; font-size: .72rem; color: var(--grey); }
+  .key span { display: inline-flex; align-items: center; gap: 5px; }
+  .key i { width: 8px; height: 8px; border-radius: 2px; }
+  @media (prefers-reduced-motion: reduce) { .ap { animation: none; } }
+  @media (max-width: 760px) { .cal { display: none; } }
+</style>

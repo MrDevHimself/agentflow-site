@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
+import WeekCard from "../components/WeekCard.astro";
 
 const services = [
   { i: "ads", t: "Ads", d: "Facebook, Instagram and Google campaigns in your area." },
@@ -25,9 +26,12 @@ const steps = [
   <Nav />
   <main>
     <div class="wrap hero">
-      <h1 class="display">Listing appointments, booked for you.</h1>
-      <p class="lede">We run your ads, call every lead, and put qualified sellers and buyers in your calendar. In Windhoek, we film your videos too.</p>
-      <a class="btn" href="/pitch">Book a free strategy call</a>
+      <div>
+        <h1 class="display">Listing appointments, booked for you.</h1>
+        <p class="lede">We run your ads, call every lead, and put qualified sellers and buyers in your calendar. In Windhoek, we film your videos too.</p>
+        <a class="btn" href="/pitch">Book a free strategy call</a>
+      </div>
+      <WeekCard />
     </div>
 
     <div class="wrap">
@@ -65,7 +69,8 @@ const steps = [
 </Base>
 
 <style>
-  .hero { padding-block: clamp(72px, 14vw, 150px) clamp(72px, 12vw, 120px); }
+  .hero { padding-block: clamp(72px, 14vw, 150px) clamp(72px, 12vw, 120px); display: grid; grid-template-columns: 1fr 250px; gap: 48px; align-items: start; }
+  @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } }
   .hero h1 { max-width: 12ch; }
   .hero .lede { margin: 24px 0 36px; max-width: 30rem; }
   .cta { border-top: 1px solid var(--line); padding-block: 96px; text-align: center; }
