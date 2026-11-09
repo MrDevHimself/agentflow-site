@@ -25,6 +25,7 @@ import Logo from "../components/Logo.astro";
         title="Book a discovery call"
         loading="lazy"
       ></iframe>
+      <p class="note">By booking, you agree that we can use your details to arrange your call and follow up with you, as set out in our <a href="/privacy">privacy policy</a>.</p>
     </section>
   </main>
 </Base>
@@ -65,5 +66,7 @@ import Logo from "../components/Logo.astro";
     min-height: 860px;
     box-shadow: 0 40px 80px -40px rgba(0,0,0,.8);
   }
+  .note { color: var(--muted); font-size: .9rem; text-align: center; max-width: 40rem; margin: 1.25rem auto 0; }
+  .note a { color: var(--amber); }
   @media (max-width: 640px) { .booking iframe { min-height: 720px; } }
 </style>

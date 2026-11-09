@@ -1,0 +1,30 @@
+---
+import Base from "./Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props { title: string; description: string; updated: string }
+const { title, description, updated } = Astro.props;
+---
+<Base title={`${title} · AgentFlow`} description={description}>
+  <Nav />
+  <main class="wrap legal">
+    <h1>{title}</h1>
+    <p class="updated">Last updated {updated}</p>
+    <div class="prose"><slot /></div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .legal { max-width: 760px; padding-block: clamp(3rem, 8vw, 5.5rem) clamp(4rem, 9vw, 6rem); }
+  .legal h1 { font-size: clamp(2.3rem, 5vw, 3.4rem); }
+  .updated { color: var(--muted); margin-top: .9rem; }
+  .prose { margin-top: 2.5rem; }
+  .prose :global(h2) { font-size: 1.45rem; letter-spacing: -0.02em; margin: 2.75rem 0 .8rem; }
+  .prose :global(p), .prose :global(li) { color: #C9D1DE; }
+  .prose :global(p + p) { margin-top: 1rem; }
+  .prose :global(ul) { padding-left: 1.2rem; margin: .8rem 0; display: grid; gap: .45rem; }
+  .prose :global(a) { color: var(--amber); text-underline-offset: 3px; }
+  .prose :global(strong) { color: var(--text); }
+</style>
