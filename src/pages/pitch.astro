@@ -1,0 +1,69 @@
+---
+import Base from "../layouts/Base.astro";
+import Logo from "../components/Logo.astro";
+---
+<Base title="Book a discovery call · AgentFlow" description="Book a free discovery call to see how AgentFlow books qualified listing appointments for real estate agents.">
+  <header class="top">
+    <div class="wrap bar">
+      <a href="/" aria-label="AgentFlow home"><Logo /></a>
+      <a href="/" class="back">Back to home</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap intro">
+      <p class="for">For full-time agents ready to stop waiting on referrals</p>
+      <h1>A system that books qualified listing appointments for you.</h1>
+      <p class="lede">No more flaky leads or guessing which marketing works. Book a discovery call below and we'll walk you through exactly how our listing system would run in your market.</p>
+      <a class="btn btn-primary" href="#booking">Pick a time</a>
+    </section>
+
+    <section id="booking" class="wrap booking" aria-label="Book a call">
+      <iframe
+        src="https://agentflow.estatekit.co/agentflowmedia-discovery-call"
+        id="estatekit-cal-911925da-9877-4053-96ef-36e7aa04c701"
+        title="Book a discovery call"
+        loading="lazy"
+      ></iframe>
+    </section>
+  </main>
+</Base>
+
+<script>
+  // When the EstateKit booking embed reports a completed booking, send the visitor to /thank-you.
+  window.addEventListener("message", (e: MessageEvent) => {
+    const data: any = e.data;
+    if (!data) return;
+    const name =
+      typeof data === "string" ? data
+      : typeof data.event === "string" ? data.event
+      : typeof data.type === "string" ? data.type
+      : "";
+    if (!name) return;
+    const lower = name.toLowerCase();
+    if (["booking", "scheduled", "booked", "confirmed", "complete"].some((w) => lower.includes(w))) {
+      window.location.href = "/thank-you";
+    }
+  });
+</script>
+
+<style>
+  .top { border-bottom: 1px solid var(--line); }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .bar a { text-decoration: none; }
+  .back { color: var(--muted); font-weight: 550; font-size: .95rem; }
+  .back:hover { color: var(--text); }
+
+  .intro { text-align: center; display: grid; justify-items: center; padding-block: clamp(3rem, 8vw, 5.5rem) clamp(2.5rem, 5vw, 3.5rem); }
+  .for { color: var(--amber); font-weight: 600; margin-bottom: 1.25rem; }
+  .intro h1 { max-width: 18ch; font-size: clamp(2.3rem, 5.4vw, 4.2rem); }
+  .intro .lede { margin: 1.5rem 0 2.25rem; max-width: 38rem; }
+
+  .booking { padding-bottom: 4rem; scroll-margin-top: 1.5rem; }
+  .booking iframe {
+    width: 100%; border: 0; border-radius: 16px; background: #fff;
+    min-height: 860px;
+    box-shadow: 0 40px 80px -40px rgba(0,0,0,.8);
+  }
+  @media (max-width: 640px) { .booking iframe { min-height: 720px; } }
+</style>

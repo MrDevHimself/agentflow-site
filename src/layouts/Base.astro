@@ -1,0 +1,31 @@
+---
+import "../styles/global.css";
+
+interface Props { title?: string; description?: string }
+const {
+  title = "AgentFlow · Listing appointments for real estate agents",
+  description = "Done-for-you marketing for full-time real estate agents. We run your ads, follow up every lead and book qualified seller and buyer appointments into your calendar.",
+} = Astro.props;
+const ogImage = new URL("/og.png", Astro.site ?? Astro.url).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0B1322" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

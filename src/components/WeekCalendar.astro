@@ -1,0 +1,116 @@
+---
+// Illustration of a week filling up with booked appointments.
+const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const hours = ["9", "10", "11", "12", "1", "2", "3", "4"];
+// day index, start hour offset (0 = 9am), length in hours, kind, label
+const appts = [
+  { d: 0, s: 0.5, l: 1, k: "seller", t: "Seller", sub: "4-bed" },
+  { d: 0, s: 4, l: 1, k: "buyer", t: "Buyer", sub: "Approved" },
+  { d: 1, s: 2, l: 1.5, k: "listing", t: "Listing", sub: "Townhouse" },
+  { d: 2, s: 1, l: 1, k: "buyer", t: "Viewing", sub: "3 homes" },
+  { d: 2, s: 5, l: 1, k: "seller", t: "Seller", sub: "Relocating" },
+  { d: 3, s: 0, l: 1, k: "seller", t: "Seller", sub: "Inherited" },
+  { d: 3, s: 3.5, l: 1.5, k: "listing", t: "Listing", sub: "4-bed house" },
+  { d: 4, s: 1.5, l: 1, k: "buyer", t: "Buyer", sub: "First home" },
+  { d: 4, s: 5.5, l: 1, k: "seller", t: "Seller", sub: "Downsizing" },
+];
+---
+<figure class="cal" aria-label="Example week: a calendar filling up with booked seller, buyer and listing appointments">
+  <div class="head" aria-hidden="true">
+    <span class="title">Your week</span>
+    <span class="count"><b>9</b> booked</span>
+  </div>
+  <div class="grid" aria-hidden="true">
+    <div class="corner"></div>
+    {days.map((d) => <div class="day">{d}</div>)}
+    <div class="hours">{hours.map((h) => <span>{h}</span>)}</div>
+    <div class="body">
+      {days.map(() => <div class="col"></div>)}
+      {appts.map((a, i) => (
+        <div
+          class={`appt ${a.k}`}
+          style={`--d:${a.d};--s:${a.s};--l:${a.l};--i:${i}`}
+        >
+          <strong>{a.t}</strong>
+          <span>{a.sub}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+  <figcaption class="legend">
+    <span><i class="seller"></i>Seller</span>
+    <span><i class="buyer"></i>Buyer</span>
+    <span><i class="listing"></i>Listing</span>
+  </figcaption>
+</figure>
+
+<style>
+  .cal {
+    margin: 0;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 1.1rem 1.1rem .9rem;
+    box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255,255,255,.02) inset;
+  }
+  .head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 .2rem .9rem; }
+  .title { font-weight: 700; letter-spacing: -0.01em; }
+  .count { color: var(--muted); font-size: .9rem; }
+  .count b { color: var(--amber); font-weight: 700; }
+
+  .grid {
+    --row: 50px;
+    display: grid;
+    grid-template-columns: 26px repeat(5, 1fr);
+    grid-template-rows: auto calc(var(--row) * 8);
+    column-gap: 0;
+  }
+  .day { font-size: .8rem; color: var(--muted); padding: 0 0 .5rem .4rem; }
+  .hours { grid-column: 1; display: grid; grid-template-rows: repeat(8, var(--row)); }
+  .hours span { font-size: .7rem; color: #5D6B82; transform: translateY(-.45em); }
+  .body {
+    grid-column: 2 / -1; position: relative;
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    background-image: linear-gradient(var(--line) 1px, transparent 1px);
+    background-size: 100% var(--row);
+    border-bottom: 1px solid var(--line);
+  }
+  .col { border-left: 1px solid var(--line); }
+
+  .appt {
+    position: absolute;
+    left: calc(var(--d) * 20% + 3px);
+    width: calc(20% - 6px);
+    top: calc(var(--s) * var(--row) + 2px);
+    height: calc(var(--l) * var(--row) - 4px);
+    border-radius: 7px;
+    padding: .35rem .45rem;
+    font-size: .72rem; line-height: 1.2;
+    overflow: hidden;
+    border-left: 3px solid;
+    animation: book .5s cubic-bezier(.2,.8,.2,1) both;
+    animation-delay: calc(.35s + var(--i) * .22s);
+  }
+  .appt strong, .appt span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .appt strong { font-weight: 650; color: var(--text); }
+  .appt span { color: var(--muted); }
+  .seller { background: rgba(242, 179, 61, .16); border-color: var(--amber); }
+  .buyer { background: rgba(141, 178, 255, .14); border-color: var(--sky); }
+  .listing { background: rgba(242, 179, 61, .30); border-color: #FFD27A; }
+
+  @keyframes book {
+    from { opacity: 0; transform: translateY(6px) scale(.96); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .legend { display: flex; gap: 1.1rem; padding: .85rem .2rem 0; font-size: .8rem; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: .4rem; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; border-left: 3px solid; }
+
+  @media (max-width: 520px) {
+    .grid { --row: 40px; }
+    .appt span { display: none; }
+    .appt { font-size: .62rem; padding: .25rem .3rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .appt { animation: none; } }
+</style>
