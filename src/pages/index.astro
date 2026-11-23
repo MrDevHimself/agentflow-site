@@ -4,6 +4,7 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
 import { offer } from "../offer";
+import HeroScape from "../components/HeroScape.astro";
 
 const we = [
   { i: "pen", t: "We write your ads", d: "Scripts built to get homeowners to put their hand up." },
@@ -33,13 +34,16 @@ const faq = [
 <Base>
   <Nav />
   <main>
+    <section class="herobg">
+    <HeroScape />
     <div class="wrap hero">
-      <p class="eyebrow">For real estate agents in Namibia</p>
+      <p class="eyebrow">For real estate agents in Namibia and South Africa</p>
       <h1 class="display">{offer.headline[0]}<span class="ul">{offer.headline[1]}<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 50 3, 110 3, 197 7" /></svg></span>{offer.headline[2]}</h1>
       <p class="lede">{offer.lede}</p>
       <a class="btn big" href="/pitch">See if your spot's open</a>
       <p class="micro">{offer.micro} · <strong class="hot">Limited spots</strong></p>
     </div>
+    </section>
 
     <div class="wrap">
 
@@ -92,7 +96,8 @@ const faq = [
 </Base>
 
 <style>
-  .hero { padding-block: clamp(64px, 12vw, 130px) clamp(48px, 8vw, 80px); }
+  .herobg { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .hero { position: relative; z-index: 1; padding-block: clamp(48px, 8vw, 96px) clamp(160px, 17vw, 230px); }
   .eyebrow { font-size: .95rem; font-weight: 600; color: var(--grey); margin-bottom: 18px; }
   .hero h1 { max-width: 16ch; }
   .hero .lede { margin: 24px 0 36px; max-width: 34rem; }
