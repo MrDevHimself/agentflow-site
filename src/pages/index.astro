@@ -3,17 +3,18 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
+import AdShowcase from "../components/AdShowcase.astro";
 
 const facts = [
-  { n: "N$0", d: "service fee for your first 30 days" },
-  { n: "Every", d: "lead goes straight to you" },
-  { n: "Done", d: "scripts, filming and ads, handled" },
-  { n: "Few", d: "agents at a time, so spots are limited" },
+  { n: "N$0", d: "Service fee for your first 30 days" },
+  { n: "100%", d: "Of your leads go straight to you" },
+  { n: "2", d: "Ad styles: video, or image ads with your photo" },
+  { n: "24h", d: "Your only job: call each lead back within a day" },
 ] as const;
 
 const we = [
   { i: "pen", t: "We write your ads", d: "Scripts built to get homeowners to put their hand up." },
-  { i: "video", t: "We film them", d: "With you on camera. We direct, you talk." },
+  { i: "video", t: "We make them", d: "Video ads with you on camera, or image ads with your photo and branding. Your choice." },
   { i: "ads", t: "We run them", d: "Facebook and Instagram, aimed at homeowners in your area." },
   { i: "send", t: "Every lead goes to you", d: "Name, number and what they're after, straight to your phone." },
 ] as const;
@@ -26,14 +27,14 @@ const extras = [
 
 const steps = [
   { i: "chat", t: "1. Book a free call", d: "30 minutes. We look at your area and see if it's a fit." },
-  { i: "rocket", t: "2. We launch", d: "Scripts, filming and ads, live within days." },
+  { i: "rocket", t: "2. We launch", d: "Your ads are made and live within days." },
   { i: "call", t: "3. Leads land on your phone", d: "You call each one within a day. That's your part." },
 ] as const;
 
 const faq = [
   { q: "What does the 30-day trial cost?", a: "No service fee. You only cover the ad spend (N$1,500), which is the money that runs your ads." },
   { q: "What happens after 30 days?", a: "If it's working, we talk about carrying on and go through pricing together. If it's not, you walk away." },
-  { q: "Do I have to be on camera?", a: "Yes. Our ads are videos with you in them, because people list with a face they recognise. We write the script and direct you, so it's easy." },
+  { q: "Do I have to be on camera?", a: "No. Video ads with you in them are a bonus, because people list with a face they recognise, and we write and direct them so it's easy. But we also run image ads with your photo and branding, so camera-shy is fine." },
   { q: "Where do you work?", a: "With agents across Namibia and South Africa. Filming is done in Windhoek." },
 ] as const;
 ---
@@ -42,10 +43,10 @@ const faq = [
   <main>
     <div class="wrap hero">
       <p class="eyebrow">For real estate agents in Namibia</p>
-      <h1 class="display">We'll bring you seller leads. You don't pay us a cent for 30 days.</h1>
-      <p class="lede">We write, film and run your ads, and send every lead straight to you. For your first 30 days there's no service fee. You only cover the ad spend.</p>
+      <h1 class="display">We'll bring you seller leads. You don't pay us <span class="ul">a cent<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 50 3, 110 3, 197 7" /></svg></span> for 30 days.</h1>
+      <p class="lede">We make and run your ads, video or image, and send every lead straight to you. For your first 30 days there's no service fee. You only cover the ad spend.</p>
       <a class="btn big" href="/pitch">See if your spot's open</a>
-      <p class="micro">30 days service-fee free · Limited spots</p>
+      <p class="micro">30 days service-fee free · <strong class="hot">Limited spots</strong></p>
     </div>
 
     <div class="wrap">
@@ -68,6 +69,14 @@ const faq = [
             <p class="thats">That's it.</p>
           </div>
         </div>
+      </section>
+
+      <section class="part">
+        <div>
+          <h2>Your ads</h2>
+          <p class="where">Video or image. On camera is a bonus, not a must.</p>
+        </div>
+        <AdShowcase />
       </section>
 
       <section class="part">
@@ -94,7 +103,7 @@ const faq = [
       <div class="cta">
         <h2>You keep doing what you're good at. We do everything around it.</h2>
         <a class="btn big" href="/pitch">See if your spot's open</a>
-        <p class="micro">30 days service-fee free · Limited spots</p>
+        <p class="micro">30 days service-fee free · <strong class="hot">Limited spots</strong></p>
       </div>
     </div>
   </main>
@@ -108,10 +117,16 @@ const faq = [
   .hero .lede { margin: 24px 0 36px; max-width: 34rem; }
   .btn.big { padding: 17px 28px; font-size: 1.05rem; }
   .micro { margin-top: 14px; color: var(--grey); font-size: .9rem; }
+  .ul { position: relative; white-space: nowrap; }
+  .ul svg { position: absolute; left: -2%; bottom: -0.1em; width: 104%; height: .22em; overflow: visible; }
+  .ul path { fill: none; stroke: var(--red); stroke-width: 5; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-dasharray: 260; stroke-dashoffset: 260; animation: draw .7s .4s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .ul path { animation: none; stroke-dashoffset: 0; } }
 
   .facts { list-style: none; margin: 0 0 8px; padding: 28px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-  .facts strong { display: block; font-size: clamp(1.6rem, 3.4vw, 2.1rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; }
-  .facts span { display: block; color: var(--grey); font-size: .92rem; line-height: 1.4; margin-top: 4px; }
+  .facts li { border-left: 2px solid var(--ink); padding-left: 14px; }
+  .facts strong { display: block; font-size: clamp(1.9rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .facts span { display: block; color: var(--grey); font-size: .9rem; line-height: 1.4; margin-top: 8px; }
   @media (max-width: 700px) { .facts { grid-template-columns: 1fr 1fr; } }
 
   .split { display: grid; grid-template-columns: 1fr 200px; gap: 32px; align-items: start; }
