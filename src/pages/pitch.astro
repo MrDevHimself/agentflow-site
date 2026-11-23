@@ -3,17 +3,18 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
+import { offer } from "../offer";
 
 const GOOGLE_BOOKING_URL =
   "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1s9b6bxcsyzgHRuHrWrqKSvOYiVSpukN-JA4utaTzc0Hk54I0vTMgMA9V9sITcvtOoIuLgaRh4?gv=true";
 const whatsapp = `https://wa.me/264816780891?text=${encodeURIComponent("Hey there, just booked a strategy call, looking forward to it.")}`;
 ---
-<Base title="Book a free call · AgentFlow" description="Watch the 1-minute breakdown, then book a free 30-minute call. Your first 30 days are service-fee free.">
+<Base title="Book a free call · AgentFlow" description={`Watch the 1-minute breakdown, then book a free 30-minute call. ${offer.booking}`}>
   <Nav booking />
   <main class="wrap">
     <div class="intro">
       <h1 class="display">See if your spot's open.</h1>
-      <p class="lede">Watch the 1-minute breakdown, then book a free 30-minute call. Your first 30 days are service-fee free. <strong class="hot">Spots are limited.</strong></p>
+      <p class="lede">Watch the 1-minute breakdown, then book a free 30-minute call. {offer.booking} <strong class="hot">Spots are limited.</strong></p>
     </div>
 
     <p class="step">1. Watch how it works</p>

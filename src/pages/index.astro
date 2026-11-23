@@ -3,25 +3,18 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
-import AdShowcase from "../components/AdShowcase.astro";
-
-const facts = [
-  { n: "N$0", d: "Service fee for your first 30 days" },
-  { n: "100%", d: "Of your leads go straight to you" },
-  { n: "2", d: "Ad styles: video, or image ads with your photo" },
-  { n: "24h", d: "Your only job: call each lead back within a day" },
-] as const;
+import { offer } from "../offer";
 
 const we = [
   { i: "pen", t: "We write your ads", d: "Scripts built to get homeowners to put their hand up." },
-  { i: "video", t: "We make them", d: "Video ads with you on camera, or image ads with your photo and branding. Your choice." },
+  { i: "video", t: "We make them", d: "Image ads with your photo and branding. Video ads too, if you're up for being on camera." },
   { i: "ads", t: "We run them", d: "Facebook and Instagram, aimed at homeowners in your area." },
   { i: "send", t: "Every lead goes to you", d: "Name, number and what they're after, straight to your phone." },
 ] as const;
 
 const extras = [
   { i: "globe", t: "Your own listings page", d: "A page with all your listings on it, ready to share." },
-  { i: "house", t: "Listing videos", d: "If you're open to filming, we film and market your listings. Filmed in Windhoek." },
+  { i: "house", t: "Listing videos", d: "In Windhoek, we can also film and market your listings in person." },
   { i: "file", t: "Weekly reports", d: "One for you, and one for your seller. All you do is press send." },
 ] as const;
 
@@ -32,10 +25,9 @@ const steps = [
 ] as const;
 
 const faq = [
-  { q: "What does the 30-day trial cost?", a: "No service fee. You only cover the ad spend (N$1,500), which is the money that runs your ads." },
-  { q: "What happens after 30 days?", a: "If it's working, we talk about carrying on and go through pricing together. If it's not, you walk away." },
-  { q: "Do I have to be on camera?", a: "No. Video ads with you in them are a bonus, because people list with a face they recognise, and we write and direct them so it's easy. But we also run image ads with your photo and branding, so camera-shy is fine." },
-  { q: "Where do you work?", a: "With agents across Namibia and South Africa. Filming is done in Windhoek." },
+  ...offer.faq,
+  { q: "Do I have to be on camera?", a: "No. We run image ads with your photo and branding. Video ads with you in them are an optional bonus." },
+  { q: "Where do you work?", a: "With agents across Namibia and South Africa. In-person filming is Windhoek only." },
 ] as const;
 ---
 <Base>
@@ -43,16 +35,13 @@ const faq = [
   <main>
     <div class="wrap hero">
       <p class="eyebrow">For real estate agents in Namibia</p>
-      <h1 class="display">We'll bring you seller leads. You don't pay us <span class="ul">a cent<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 50 3, 110 3, 197 7" /></svg></span> for 30 days.</h1>
-      <p class="lede">We make and run your ads, video or image, and send every lead straight to you. For your first 30 days there's no service fee. You only cover the ad spend.</p>
+      <h1 class="display">{offer.headline[0]}<span class="ul">{offer.headline[1]}<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 50 3, 110 3, 197 7" /></svg></span>{offer.headline[2]}</h1>
+      <p class="lede">{offer.lede}</p>
       <a class="btn big" href="/pitch">See if your spot's open</a>
-      <p class="micro">30 days service-fee free · <strong class="hot">Limited spots</strong></p>
+      <p class="micro">{offer.micro} · <strong class="hot">Limited spots</strong></p>
     </div>
 
     <div class="wrap">
-      <ul class="facts">
-        {facts.map((f) => <li><strong>{f.n}</strong><span>{f.d}</span></li>)}
-      </ul>
 
       <section class="part">
         <div>
@@ -69,14 +58,6 @@ const faq = [
             <p class="thats">That's it.</p>
           </div>
         </div>
-      </section>
-
-      <section class="part">
-        <div>
-          <h2>Your ads</h2>
-          <p class="where">Video or image. On camera is a bonus, not a must.</p>
-        </div>
-        <AdShowcase />
       </section>
 
       <section class="part">
@@ -103,7 +84,7 @@ const faq = [
       <div class="cta">
         <h2>You keep doing what you're good at. We do everything around it.</h2>
         <a class="btn big" href="/pitch">See if your spot's open</a>
-        <p class="micro">30 days service-fee free · <strong class="hot">Limited spots</strong></p>
+        <p class="micro">{offer.micro} · <strong class="hot">Limited spots</strong></p>
       </div>
     </div>
   </main>
@@ -123,11 +104,6 @@ const faq = [
   @keyframes draw { to { stroke-dashoffset: 0; } }
   @media (prefers-reduced-motion: reduce) { .ul path { animation: none; stroke-dashoffset: 0; } }
 
-  .facts { list-style: none; margin: 0 0 8px; padding: 28px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-  .facts li { border-left: 2px solid var(--ink); padding-left: 14px; }
-  .facts strong { display: block; font-size: clamp(1.9rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
-  .facts span { display: block; color: var(--grey); font-size: .9rem; line-height: 1.4; margin-top: 8px; }
-  @media (max-width: 700px) { .facts { grid-template-columns: 1fr 1fr; } }
 
   .split { display: grid; grid-template-columns: 1fr 200px; gap: 32px; align-items: start; }
   .you { border: 1px solid var(--ink); border-radius: 14px; padding: 20px; }
