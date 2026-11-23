@@ -4,17 +4,18 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
 import { offer } from "../offer";
+import { LEAD_LOG_URL, CALENDLY_URL, GOOGLE_BOOKING_URL, LISTINGS_OPTIONS, NOT_YET } from "../booking";
 
-const GOOGLE_BOOKING_URL =
-  "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1s9b6bxcsyzgHRuHrWrqKSvOYiVSpukN-JA4utaTzc0Hk54I0vTMgMA9V9sITcvtOoIuLgaRh4?gv=true";
 const whatsapp = `https://wa.me/264816780891?text=${encodeURIComponent("Hey there, just booked a strategy call, looking forward to it.")}`;
+const whatsappNotYet = `https://wa.me/264816780891?text=${encodeURIComponent("Hi, I'd like to hear when AgentFlow opens up to more agents.")}`;
+const usesCalendly = CALENDLY_URL !== "";
 ---
 <Base title="Book a free call · AgentFlow" description={`Watch the 1-minute breakdown, then book a free 30-minute call. ${offer.booking}`}>
   <Nav booking />
   <main class="wrap">
     <div class="intro">
       <h1 class="display">See if your spot's open.</h1>
-      <p class="lede">Watch the 1-minute breakdown, then book a free 30-minute call. {offer.booking} <strong class="hot">Spots are limited.</strong></p>
+      <p class="lede">Watch the 1-minute breakdown, answer a few quick questions, then book a free 30-minute call. {offer.booking} <strong class="hot">Spots are limited.</strong></p>
     </div>
 
     <p class="step">1. Watch how it works</p>
@@ -24,17 +25,55 @@ const whatsapp = `https://wa.me/264816780891?text=${encodeURIComponent("Hey ther
       </video>
     </div>
 
-    <p class="step">2. Pick a time</p>
+    <p class="step">2. Check you qualify</p>
+    <p class="note">We work with established agents: at least 3 listings taken on in the last 6 months. It takes about a minute.</p>
 
-    <div class="embed">
-      <iframe src={GOOGLE_BOOKING_URL} title="Book a strategy call with AgentFlow" loading="lazy"></iframe>
+    <form id="qualify" class="form" novalidate data-log={LEAD_LOG_URL} data-notyet={NOT_YET}>
+      <div class="row2">
+        <label>Your name<input name="name" autocomplete="name" required /></label>
+        <label>Mobile number (WhatsApp)<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required /></label>
+      </div>
+      <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+      <label>Link to your agent profile<span class="hint">Property24, HouseFinder or your agency's website</span><input name="profile" inputmode="url" autocapitalize="off" placeholder="e.g. property24.com.na/agent/your-name" required /></label>
+      <label>Which agency are you with, and which areas do you mainly sell in?<input name="agency" required /></label>
+      <label>How many listings have you taken on in the last 6 months?
+        <select name="listings" required>
+          <option value="">Choose one</option>
+          {LISTINGS_OPTIONS.map((o) => <option>{o}</option>)}
+        </select>
+      </label>
+      <label><span>Where do most of your listings come from right now? <span class="opt">(optional)</span></span><span class="hint">For example referrals, past clients, boards, portals or ads</span><input name="source" /></label>
+      <fieldset>
+        <legend>The 30-day trial has no service fee, but the ads cost N$1,500, paid directly to Facebook. Is that OK for you?</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="adspend" value="Yes" required /> Yes</label>
+          <label class="choice"><input type="radio" name="adspend" value="No" /> No</label>
+          <label class="choice"><input type="radio" name="adspend" value="Want to discuss" /> Want to discuss</label>
+        </div>
+      </fieldset>
+      <p class="err" id="err" role="alert" hidden>Please fill in the fields marked in red.</p>
+      <button class="btn" type="submit">Continue to pick a time</button>
+      <p class="fine">Your answers save as you go, so we can follow up if something goes wrong. See our <a href="/privacy">privacy policy</a>.</p>
+    </form>
+
+    <div id="notyet" class="notyet" hidden>
+      <h2>Thanks, you're not quite there yet.</h2>
+      <p>Right now we're only taking on agents with at least 3 listings in the last 6 months, so we can give each one our full attention. Message us and we'll let you know when we open up.</p>
+      <a class="btn wa" href={whatsappNotYet} target="_blank" rel="noopener">Message us on WhatsApp</a>
     </div>
-    <p class="fine">By booking, you agree that we can use your details to arrange your call, as set out in our <a href="/privacy">privacy policy</a>.</p>
+
+    <div id="pick" hidden>
+      <p class="step">3. Pick a time</p>
+      <div class="embed">
+        <iframe id="cal" title="Book a strategy call with AgentFlow" data-calendly={CALENDLY_URL} data-google={GOOGLE_BOOKING_URL}></iframe>
+      </div>
+      <p class="fine">By booking, you agree that we can use your details to arrange your call, as set out in our <a href="/privacy">privacy policy</a>.</p>
+    </div>
 
     <section class="part after">
       <h2>After you book</h2>
       <ol class="items">
-        <li><Icon name="mail" /><div><strong>1. Check your email</strong><span class="d">Google sends you a confirmation with the call link. Look in Spam if it's not there.</span></div></li>
+        <li><Icon name="mail" /><div><strong>1. Check your email</strong><span class="d">{usesCalendly ? "Calendly" : "Google"} sends you a confirmation with the call link. Look in Spam if it's not there.</span></div></li>
         <li><Icon name="cal" /><div><strong>2. Save it to your calendar</strong><span class="d">The invite is already attached. Tap Yes so you don't miss it.</span></div></li>
         <li>
           <Icon name="chat" />
@@ -49,17 +88,162 @@ const whatsapp = `https://wa.me/264816780891?text=${encodeURIComponent("Hey ther
   <Footer />
 </Base>
 
+<script>
+  const form = document.getElementById("qualify") as HTMLFormElement;
+  const logUrl = form.dataset.log || "";
+  const notYet = form.dataset.notyet || "";
+  const labels: Record<string, string> = {
+    name: "Name", phone: "Mobile number", email: "Email", profile: "Profile link",
+    agency: "Agency and areas", listings: "Listings in 6 months", source: "Where listings come from",
+    adspend: "Ad spend question",
+  };
+
+  let sid = "";
+  try { sid = sessionStorage.getItem("af_sid") || ""; } catch {}
+  if (!sid) {
+    sid = (crypto.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
+    try { sessionStorage.setItem("af_sid", sid); } catch {}
+  }
+
+  let at = "";
+  let status = "Started";
+  let timer: number | undefined;
+
+  function values() {
+    const fd = new FormData(form);
+    const out: Record<string, string> = {};
+    for (const k of Object.keys(labels)) out[k] = String(fd.get(k) ?? "").trim();
+    return out;
+  }
+
+  function hasAnything(v: Record<string, string>) {
+    return Object.values(v).some((x) => x !== "");
+  }
+
+  function send() {
+    if (!logUrl) return;
+    const v = values();
+    if (!hasAnything(v) && status === "Started") return;
+    const body = JSON.stringify({ sid, values: v, at, status });
+    // text/plain keeps this a "simple" request, so Google's web app accepts it.
+    fetch(logUrl, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain" }, body }).catch(() => {});
+  }
+
+  function later() {
+    clearTimeout(timer);
+    timer = window.setTimeout(send, 800);
+  }
+
+  form.addEventListener("focusin", (e) => {
+    const el = e.target as HTMLInputElement;
+    if (el.name && labels[el.name]) at = labels[el.name];
+  });
+  form.addEventListener("input", later);
+  form.addEventListener("change", later);
+  addEventListener("pagehide", () => { clearTimeout(timer); send(); });
+
+  function check() {
+    let ok = true;
+    form.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[required]").forEach((el) => {
+      const field = el instanceof HTMLInputElement && el.type === "radio" ? el.closest("fieldset") : el.closest("label");
+      let valid = el.checkValidity();
+      if (el.name === "profile") valid = /\w+\.\w+/.test(el.value);
+      if (el instanceof HTMLInputElement && el.type === "radio") valid = !!form.querySelector(`input[name="${el.name}"]:checked`);
+      field?.classList.toggle("bad", !valid);
+      if (!valid) ok = false;
+    });
+    return ok;
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const err = document.getElementById("err")!;
+    if (!check()) {
+      err.hidden = false;
+      form.querySelector<HTMLElement>(".bad input, .bad select")?.focus();
+      return;
+    }
+    err.hidden = true;
+    const v = values();
+    at = "Finished";
+
+    if (v.listings === notYet) {
+      status = "Not yet eligible";
+      send();
+      form.hidden = true;
+      document.getElementById("notyet")!.hidden = false;
+      return;
+    }
+
+    status = "Form done";
+    send();
+    form.hidden = true;
+    const frame = document.getElementById("cal") as HTMLIFrameElement;
+    const cal = frame.dataset.calendly || "";
+    if (cal) {
+      const u = new URL(cal);
+      u.searchParams.set("name", v.name);
+      u.searchParams.set("email", v.email);
+      u.searchParams.set("a1", v.phone);
+      u.searchParams.set("embed_type", "Inline");
+      u.searchParams.set("embed_domain", location.hostname);
+      u.searchParams.set("hide_gdpr_banner", "1");
+      frame.src = u.toString();
+    } else {
+      frame.src = frame.dataset.google || "";
+    }
+    const pick = document.getElementById("pick")!;
+    pick.hidden = false;
+    pick.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // Calendly tells the page when a call is booked.
+  addEventListener("message", (e) => {
+    if (e.origin !== "https://calendly.com") return;
+    if (e.data?.event === "calendly.event_scheduled") {
+      status = "Booked";
+      at = "Booked";
+      send();
+    }
+  });
+</script>
+
 <style>
   .intro { padding-block: clamp(56px, 10vw, 100px) 40px; }
   .intro h1 { font-size: clamp(2.4rem, 6vw, 3.8rem); max-width: 14ch; }
   .intro .lede { margin-top: 20px; font-size: clamp(1.05rem, 1.8vw, 1.2rem); }
 
+  [hidden] { display: none !important; }
   .step { font-weight: 700; margin: 0 0 14px; }
+  .note { color: var(--grey); margin: -6px 0 20px; }
   .video { border-radius: 14px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; margin-bottom: 56px; }
   .video video { width: 100%; height: 100%; display: block; }
 
+  .form { display: grid; gap: 18px; border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 4vw, 32px); margin-bottom: 56px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 640px) { .row2 { grid-template-columns: 1fr; } }
+  .form label, .form legend { display: grid; gap: 6px; font-weight: 600; font-size: .98rem; }
+  .form fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .hint, .opt { color: var(--grey); font-weight: 400; font-size: .88rem; }
+  .form input:not([type="radio"]), .form select {
+    font: inherit; font-weight: 400; width: 100%; padding: 12px 14px; border: 1px solid #cfcfcf; border-radius: 8px; background: var(--paper); color: var(--ink);
+  }
+  .form input:focus, .form select:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 10px; }
+  .form .choice { display: flex; align-items: center; gap: 8px; font-weight: 500; border: 1px solid #cfcfcf; border-radius: 8px; padding: 10px 14px; cursor: pointer; }
+  .choice input { accent-color: var(--ink); }
+  .bad input:not([type="radio"]), .bad select { border-color: var(--red); }
+  .bad legend, fieldset.bad .choice { color: var(--red); border-color: var(--red); }
+  .err { color: var(--red); font-weight: 600; margin: 0; }
+  .form button { justify-self: start; border: 0; font: inherit; font-weight: 700; cursor: pointer; }
+  .form .fine { margin-top: 0; }
+
+  .notyet { border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 4vw, 32px); margin-bottom: 56px; display: grid; gap: 12px; }
+  .notyet h2 { font-size: 1.4rem; letter-spacing: -0.02em; }
+  .notyet p { color: var(--grey); }
+
   .embed { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-  .embed iframe { width: 100%; height: 680px; border: 0; }
+  .embed iframe { width: 100%; height: 700px; border: 0; }
   @media (max-width: 640px) { .embed iframe { height: 900px; } }
 
   .fine { color: var(--grey); font-size: .85rem; margin-top: 14px; }
