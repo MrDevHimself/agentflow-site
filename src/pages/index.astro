@@ -3,52 +3,77 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
-import WeekCard from "../components/WeekCard.astro";
 
-const services = [
-  { i: "ads", t: "Ads", d: "Facebook, Instagram and Google campaigns in your area." },
-  { i: "call", t: "Calling", d: "Our team calls every lead within minutes and qualifies them." },
-  { i: "follow", t: "Follow-up", d: "A CRM that keeps nurturing leads for up to 12 months." },
+const facts = [
+  { n: "N$0", d: "service fee for your first 30 days" },
+  { n: "Every", d: "lead goes straight to you" },
+  { n: "Done", d: "scripts, filming and ads, handled" },
+  { n: "Few", d: "agents at a time, so spots are limited" },
 ] as const;
 
-const video = [
-  { i: "video", t: "Your content", d: "We write the script, film you and edit it into videos for your ads and socials." },
-  { i: "house", t: "Property videos", d: "We film the home room by room and edit it into a listing video that helps it sell." },
+const we = [
+  { i: "pen", t: "We write your ads", d: "Scripts built to get homeowners to put their hand up." },
+  { i: "video", t: "We film them", d: "With you on camera. We direct, you talk." },
+  { i: "ads", t: "We run them", d: "Facebook and Instagram, aimed at homeowners in your area." },
+  { i: "send", t: "Every lead goes to you", d: "Name, number and what they're after, straight to your phone." },
+] as const;
+
+const extras = [
+  { i: "globe", t: "Your own listings page", d: "A page with all your listings on it, ready to share." },
+  { i: "house", t: "Listing videos", d: "If you're open to filming, we film and market your listings. Filmed in Windhoek." },
+  { i: "file", t: "Weekly reports", d: "One for you, and one for your seller. All you do is press send." },
 ] as const;
 
 const steps = [
-  { i: "chat", t: "1. Strategy call", d: "We look at your market and what will work there." },
-  { i: "rocket", t: "2. We launch", d: "Ads, pages and CRM go live in days." },
-  { i: "cal", t: "3. You get appointments", d: "Qualified people show up in your calendar." },
+  { i: "chat", t: "1. Book a free call", d: "30 minutes. We look at your area and see if it's a fit." },
+  { i: "rocket", t: "2. We launch", d: "Scripts, filming and ads, live within days." },
+  { i: "call", t: "3. Leads land on your phone", d: "You call each one within a day. That's your part." },
+] as const;
+
+const faq = [
+  { q: "What does the 30-day trial cost?", a: "No service fee. You only cover the ad spend (N$1,500), which is the money that runs your ads." },
+  { q: "What happens after 30 days?", a: "If it's working, we talk about carrying on and go through pricing together. If it's not, you walk away." },
+  { q: "Do I have to be on camera?", a: "Yes. Our ads are videos with you in them, because people list with a face they recognise. We write the script and direct you, so it's easy." },
+  { q: "Where do you work?", a: "With agents across Namibia and South Africa. Filming is done in Windhoek." },
 ] as const;
 ---
 <Base>
   <Nav />
   <main>
     <div class="wrap hero">
-      <div>
-        <h1 class="display">Listing appointments, booked for you.</h1>
-        <p class="lede">We run your ads, call every lead, and put qualified sellers and buyers in your calendar. In Windhoek, we film your videos too.</p>
-        <a class="btn" href="/pitch">Book a free strategy call</a>
-      </div>
-      <WeekCard />
+      <p class="eyebrow">For real estate agents in Namibia</p>
+      <h1 class="display">We'll bring you seller leads. You don't pay us a cent for 30 days.</h1>
+      <p class="lede">We write, film and run your ads, and send every lead straight to you. For your first 30 days there's no service fee. You only cover the ad spend.</p>
+      <a class="btn big" href="/pitch">See if your spot's open</a>
+      <p class="micro">30 days service-fee free · Limited spots</p>
     </div>
 
     <div class="wrap">
-      <section class="part">
-        <h2>What we do</h2>
-        <ul class="items">
-          {services.map((s) => <li><Icon name={s.i} /><div><strong>{s.t}</strong><span class="d">{s.d}</span></div></li>)}
-        </ul>
-      </section>
+      <ul class="facts">
+        {facts.map((f) => <li><strong>{f.n}</strong><span>{f.d}</span></li>)}
+      </ul>
 
       <section class="part">
         <div>
-          <h2>Video</h2>
-          <p class="where">Filmed in Windhoek</p>
+          <h2>Here's the split</h2>
+          <p class="where">We do the handiwork. You close.</p>
         </div>
+        <div class="split">
+          <ul class="items">
+            {we.map((s) => <li><Icon name={s.i} /><div><strong>{s.t}</strong><span class="d">{s.d}</span></div></li>)}
+          </ul>
+          <div class="you">
+            <p class="tag">Your part</p>
+            <p class="big">Call every lead within a day.</p>
+            <p class="thats">That's it.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="part">
+        <h2>Also included</h2>
         <ul class="items">
-          {video.map((s) => <li><Icon name={s.i} /><div><strong>{s.t}</strong><span class="d">{s.d}</span></div></li>)}
+          {extras.map((s) => <li><Icon name={s.i} /><div><strong>{s.t}</strong><span class="d">{s.d}</span></div></li>)}
         </ul>
       </section>
 
@@ -59,9 +84,17 @@ const steps = [
         </ol>
       </section>
 
+      <section class="part">
+        <h2>Questions</h2>
+        <div class="faq">
+          {faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+        </div>
+      </section>
+
       <div class="cta">
-        <h2>Ready for a fuller calendar?</h2>
-        <a class="btn" href="/pitch">Book a free strategy call</a>
+        <h2>You keep doing what you're good at. We do everything around it.</h2>
+        <a class="btn big" href="/pitch">See if your spot's open</a>
+        <p class="micro">30 days service-fee free · Limited spots</p>
       </div>
     </div>
   </main>
@@ -69,10 +102,33 @@ const steps = [
 </Base>
 
 <style>
-  .hero { padding-block: clamp(72px, 14vw, 150px) clamp(72px, 12vw, 120px); display: grid; grid-template-columns: 1fr 250px; gap: 48px; align-items: start; }
-  @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } }
-  .hero h1 { max-width: 12ch; }
-  .hero .lede { margin: 24px 0 36px; max-width: 30rem; }
+  .hero { padding-block: clamp(64px, 12vw, 130px) clamp(48px, 8vw, 80px); }
+  .eyebrow { font-size: .95rem; font-weight: 600; color: var(--grey); margin-bottom: 18px; }
+  .hero h1 { max-width: 16ch; }
+  .hero .lede { margin: 24px 0 36px; max-width: 34rem; }
+  .btn.big { padding: 17px 28px; font-size: 1.05rem; }
+  .micro { margin-top: 14px; color: var(--grey); font-size: .9rem; }
+
+  .facts { list-style: none; margin: 0 0 8px; padding: 28px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .facts strong { display: block; font-size: clamp(1.6rem, 3.4vw, 2.1rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; }
+  .facts span { display: block; color: var(--grey); font-size: .92rem; line-height: 1.4; margin-top: 4px; }
+  @media (max-width: 700px) { .facts { grid-template-columns: 1fr 1fr; } }
+
+  .split { display: grid; grid-template-columns: 1fr 200px; gap: 32px; align-items: start; }
+  .you { border: 1px solid var(--ink); border-radius: 14px; padding: 20px; }
+  .you .tag { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--grey); }
+  .you .big { font-weight: 700; font-size: 1.15rem; line-height: 1.3; margin-top: 8px; }
+  .you .thats { font-weight: 800; font-size: 1.5rem; letter-spacing: -0.03em; margin-top: 14px; }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+
+  .faq details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .faq details:first-child { padding-top: 0; }
+  .faq summary { font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--grey); font-weight: 400; }
+  .faq details[open] summary::after { content: "−"; }
+  .faq p { color: var(--grey); margin-top: 8px; }
+
   .cta { border-top: 1px solid var(--line); padding-block: 96px; text-align: center; }
-  .cta h2 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.04em; font-weight: 800; line-height: 1.05; margin-bottom: 28px; }
+  .cta h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); letter-spacing: -0.04em; font-weight: 800; line-height: 1.08; margin: 0 auto 28px; max-width: 20ch; }
 </style>

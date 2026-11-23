@@ -8,13 +8,22 @@ const GOOGLE_BOOKING_URL =
   "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1s9b6bxcsyzgHRuHrWrqKSvOYiVSpukN-JA4utaTzc0Hk54I0vTMgMA9V9sITcvtOoIuLgaRh4?gv=true";
 const whatsapp = `https://wa.me/264816780891?text=${encodeURIComponent("Hey there, just booked a strategy call, looking forward to it.")}`;
 ---
-<Base title="Book a strategy call · AgentFlow" description="Book a free 30-minute strategy call with AgentFlow.">
+<Base title="Book a free call · AgentFlow" description="Watch the 1-minute breakdown, then book a free 30-minute call. Your first 30 days are service-fee free.">
   <Nav booking />
   <main class="wrap">
     <div class="intro">
-      <h1 class="display">Book your free strategy call.</h1>
-      <p class="lede">30 minutes with us. We'll look at your market and show you how we'd fill your calendar with listing appointments.</p>
+      <h1 class="display">See if your spot's open.</h1>
+      <p class="lede">Watch the 1-minute breakdown, then book a free 30-minute call. Your first 30 days are service-fee free.</p>
     </div>
+
+    <p class="step">1. Watch how it works</p>
+    <div class="video">
+      <video controls playsinline preload="metadata" poster="/video/the-split.jpg">
+        <source src="/video/the-split.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <p class="step">2. Pick a time</p>
 
     <div class="embed">
       <iframe src={GOOGLE_BOOKING_URL} title="Book a strategy call with AgentFlow" loading="lazy"></iframe>
@@ -43,6 +52,10 @@ const whatsapp = `https://wa.me/264816780891?text=${encodeURIComponent("Hey ther
   .intro { padding-block: clamp(56px, 10vw, 100px) 40px; }
   .intro h1 { font-size: clamp(2.4rem, 6vw, 3.8rem); max-width: 14ch; }
   .intro .lede { margin-top: 20px; font-size: clamp(1.05rem, 1.8vw, 1.2rem); }
+
+  .step { font-weight: 700; margin: 0 0 14px; }
+  .video { border-radius: 14px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; margin-bottom: 56px; }
+  .video video { width: 100%; height: 100%; display: block; }
 
   .embed { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
   .embed iframe { width: 100%; height: 680px; border: 0; }
