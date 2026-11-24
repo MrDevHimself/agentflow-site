@@ -5,8 +5,14 @@
  * Deploy > New deployment > Web app, Execute as: Me, Who has access: Anyone.
  * Copy the web app URL into src/booking.ts (LEAD_LOG_URL).
  *
+ * Alerts go to Discord: in Discord, Server settings > Integrations > Webhooks >
+ * New webhook, pick the channel, Copy webhook URL. In Apps Script, Project
+ * settings > Script properties > Add: DISCORD_WEBHOOK = that URL.
+ * Run testDiscord once to check it works (and approve the permissions).
+ * Without a webhook, alerts come by email instead.
+ *
  * Then add a trigger (clock icon > Add trigger): function checkStalled,
- * time-driven, every 15 minutes. It emails you about forms left half-way.
+ * time-driven, every 15 minutes. It alerts you about forms left half-way.
  *
  * Every visitor to the booking form gets one row, updated as they type.
  */
@@ -66,7 +72,7 @@ function doPost(e) {
     const next = data.status || "Started";
     if ((STATUS_RANK[next] || 0) >= (STATUS_RANK[cur] || 0)) {
       sh.getRange(row, col_("Status")).setValue(next);
-      if (next !== cur && (next === "Booked" || next === "Form done")) notify_(row, next);
+      if (next !== cur && next !== "Started") alert_(row, next);
     }
     return out_("ok");
   } finally {
@@ -90,17 +96,49 @@ function rowText_(row) {
   return HEADERS.slice(3, 13).map(function (h, i) { return h + ": " + (v[i + 3] || "-"); }).join("\n");
 }
 
-function notify_(row, what) {
+// Where alerts go. Set DISCORD_WEBHOOK in Project Settings > Script properties,
+// never in this file (the website code is public on GitHub).
+const SEND_EMAIL_TOO = false;
+const COLOURS = { "Booked": 0x16a34a, "Form done": 0x2563eb, "Stopped partway": 0xf59e0b, "Not yet eligible": 0x9ca3af };
+
+function alert_(row, what) {
   const sh = sheet_();
-  const name = sh.getRange(row, col_("Name")).getValue() || "Someone";
-  const subject = what === "Booked"
-    ? "AgentFlow: " + name + " booked a call"
-    : "AgentFlow: " + name + " finished the form";
-  MailApp.sendEmail(Session.getEffectiveUser().getEmail(), subject,
-    rowText_(row) + "\n\nOpen the sheet: " + SpreadsheetApp.getActiveSpreadsheet().getUrl());
+  const v = sh.getRange(row, 1, 1, HEADERS.length).getValues()[0];
+  const get = function (h) { return String(v[col_(h) - 1] || "").trim(); };
+  const name = get("Name") || "Someone";
+  const titles = {
+    "Booked": "📅 " + name + " booked a call",
+    "Form done": "✅ " + name + " finished the form",
+    "Stopped partway": "⏸️ " + name + " stopped at: " + (get("Stopped at") || "?"),
+    "Not yet eligible": name + " doesn't qualify yet (under 3 listings)",
+  };
+  const sheetUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+
+  const hook = PropertiesService.getScriptProperties().getProperty("DISCORD_WEBHOOK");
+  if (hook) {
+    const fields = HEADERS.slice(5, 13)
+      .map(function (h) { return { name: h, value: (get(h) || "–").slice(0, 1000), inline: h !== "Agency and areas" && h !== "Where listings come from" }; });
+    const phone = get("Phone").replace(/[^\d]/g, "");
+    let desc = "[Open the sheet](" + sheetUrl + ")";
+    if (phone) desc = "[WhatsApp them](https://wa.me/" + phone + ") · " + desc;
+    UrlFetchApp.fetch(hook, {
+      method: "post",
+      contentType: "application/json",
+      muteHttpExceptions: true,
+      payload: JSON.stringify({
+        username: "AgentFlow Leads",
+        allowed_mentions: { parse: [] },
+        embeds: [{ title: titles[what].slice(0, 250), description: desc, color: COLOURS[what], fields: fields, timestamp: new Date().toISOString() }],
+      }),
+    });
+  }
+  if (SEND_EMAIL_TOO || !hook) {
+    MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "AgentFlow: " + titles[what],
+      rowText_(row) + "\n\nOpen the sheet: " + sheetUrl);
+  }
 }
 
-/** Run every 15 minutes: emails you about forms left half-way with a phone number. */
+/** Run every 15 minutes: alerts you about forms left half-way with a phone number. */
 function checkStalled() {
   const sh = sheet_();
   const n = sh.getLastRow() - 1;
@@ -113,11 +151,16 @@ function checkStalled() {
     const phone = v[col_("Phone") - 1];
     const notified = v[col_("Notified") - 1];
     if (status === "Started" && phone && !notified && now - last > STALLED_MINUTES * 60000) {
-      const name = v[col_("Name") - 1] || "Someone";
-      MailApp.sendEmail(Session.getEffectiveUser().getEmail(),
-        "AgentFlow: " + name + " started the form but stopped",
-        rowText_(i + 2) + "\n\nOpen the sheet: " + SpreadsheetApp.getActiveSpreadsheet().getUrl());
+      alert_(i + 2, "Stopped partway");
       sh.getRange(i + 2, col_("Notified")).setValue(new Date());
     }
   });
+}
+
+/** Run once by hand after setting DISCORD_WEBHOOK, to check the channel gets a message. */
+function testDiscord() {
+  const sh = sheet_();
+  sh.appendRow(["test-" + Date.now(), new Date(), new Date(), "Form done", "Finished", "Test Agent", "+264811234567",
+    "test@example.com", "property24.com.na", "Test Realty, Klein Windhoek", "3 to 5", "Referrals", "Yes", "", "Test row, delete me"]);
+  alert_(sh.getLastRow(), "Form done");
 }

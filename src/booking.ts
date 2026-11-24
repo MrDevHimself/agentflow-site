@@ -6,7 +6,7 @@ export const LEAD_LOG_URL = "";
 
 // Your Calendly link, e.g. "https://calendly.com/agentflow/strategy-call".
 // Leave empty to keep using the Google Calendar booking page below.
-export const CALENDLY_URL = "";
+export const CALENDLY_URL = "https://calendly.com/theagentflowmedia/30min";
 
 export const GOOGLE_BOOKING_URL =
   "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1s9b6bxcsyzgHRuHrWrqKSvOYiVSpukN-JA4utaTzc0Hk54I0vTMgMA9V9sITcvtOoIuLgaRh4?gv=true";
