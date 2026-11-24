@@ -2,7 +2,7 @@
 
 // The web app URL from the Google Sheet's Apps Script (Deploy > Web app).
 // Leave empty and the form still works, it just doesn't log anything.
-export const LEAD_LOG_URL = "https://script.google.com/macros/s/AKfycbw_4dNKvxqJW3VWu5RwQo_drdsBbHm2PTz7V2Rf0MZ8VkZWdLMgcrzoR0PqHdITwH64wQ/exec";
+export const LEAD_LOG_URL = "https://script.google.com/macros/s/AKfycbwbGw7Rd7eTHoQaEUJepix0FlofkCfv0hKbe7lNYGyigaEqMqdj-Ss4zJK-PES16ZKkhw/exec";
 
 // Your Calendly link, e.g. "https://calendly.com/agentflow/strategy-call".
 // Leave empty to keep using the Google Calendar booking page below.
