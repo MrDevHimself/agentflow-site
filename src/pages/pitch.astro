@@ -67,7 +67,7 @@ const usesCalendly = CALENDLY_URL !== "";
 
       <div class="pane" data-pane="3" hidden>
         <fieldset>
-          <legend>The 30-day trial has no service fee, but the ads cost N$1,500, paid directly to Facebook. Is that OK for you?</legend>
+          <legend>Your ads run from your own Facebook account, so you pay Facebook directly for the ad spend, from N$1,500 a month. Is that OK for you?</legend>
           <div class="choices">
             <label class="choice"><input type="radio" name="adspend" value="Yes" required /> Yes</label>
             <label class="choice"><input type="radio" name="adspend" value="No" /> No</label>
@@ -201,6 +201,7 @@ const usesCalendly = CALENDLY_URL !== "";
     status = "Not yet eligible";
     at = "Finished";
     send();
+    try { sessionStorage.removeItem("af_sid"); } catch {}
     form.hidden = true;
     document.getElementById("notyet")!.hidden = false;
   }
@@ -225,6 +226,8 @@ const usesCalendly = CALENDLY_URL !== "";
     status = "Form done";
     clearTimeout(timer);
     send();
+    // A second form in this same tab starts a new row (this visit keeps its id for the booking).
+    try { sessionStorage.removeItem("af_sid"); } catch {}
     form.hidden = true;
     const frame = document.getElementById("cal") as HTMLIFrameElement;
     const cal = frame.dataset.calendly || "";
