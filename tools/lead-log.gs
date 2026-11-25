@@ -164,3 +164,84 @@ function testDiscord() {
     "test@example.com", "property24.com.na", "Test Realty, Klein Windhoek", "3 to 5", "Referrals", "Yes", "", "Test row, delete me"]);
   alert_(sh.getLastRow(), "Form done");
 }
+
+/* ───────────────────────── Call reminders ─────────────────────────
+ * Calendly's free plan doesn't send reminders, but every booking lands in
+ * your Google Calendar. Add a trigger: function sendReminders, time-driven,
+ * every 15 minutes. It emails the agent 24 hours and 1 hour before the call,
+ * and posts a ready-made WhatsApp reminder for you in Discord.
+ */
+const REMINDERS = [
+  { key: "r24", hoursBefore: 24, label: "tomorrow" },
+  { key: "r1", hoursBefore: 1, label: "in an hour" },
+];
+const EMAIL_REMINDERS = true;
+const TZ = "Africa/Windhoek";
+
+function sendReminders() {
+  const props = PropertiesService.getScriptProperties();
+  const me = Session.getEffectiveUser().getEmail().toLowerCase();
+  const now = new Date();
+  const until = new Date(now.getTime() + 25 * 3600000);
+  CalendarApp.getDefaultCalendar().getEvents(now, until).forEach(function (ev) {
+    const text = (ev.getTitle() + " " + ev.getDescription()).toLowerCase();
+    if (text.indexOf("calendly") < 0) return;
+    const guest = ev.getGuestList().map(function (g) { return g.getEmail().toLowerCase(); })
+      .filter(function (e) { return e !== me; })[0]
+      // Fallback: Calendly also writes the invitee's email into the event description.
+      || ((ev.getDescription().match(/[\w.+-]+@[\w-]+\.[\w.]+/g) || []).map(function (e) { return e.toLowerCase(); })
+        .filter(function (e) { return e !== me && e.indexOf("calendly") < 0; })[0]);
+    if (!guest) return;
+    const start = ev.getStartTime();
+    const hoursLeft = (start.getTime() - now.getTime()) / 3600000;
+    // Only the nearest reminder that's due, so a late booking doesn't get both at once.
+    const due = REMINDERS.filter(function (r) { return hoursLeft <= r.hoursBefore && !props.getProperty(r.key + ":" + ev.getId()); })
+      .sort(function (a, b) { return a.hoursBefore - b.hoursBefore; })[0];
+    if (!due) return;
+    REMINDERS.forEach(function (r) { if (r.hoursBefore >= due.hoursBefore) props.setProperty(r.key + ":" + ev.getId(), "1"); });
+    if (hoursLeft < 0.2) return; // too close to bother
+
+    const lead = leadByEmail_(guest);
+    const first = (lead.name || "").split(" ")[0] || "there";
+    const when = Utilities.formatDate(start, TZ, "EEEE d MMMM 'at' HH:mm");
+    const timeOnly = Utilities.formatDate(start, TZ, "HH:mm");
+    const meet = (ev.getDescription().match(/https:\/\/meet\.google\.com\/[a-z\-]+/) || [""])[0];
+
+    if (EMAIL_REMINDERS) {
+      MailApp.sendEmail(guest, "Reminder: your AgentFlow call " + due.label + " (" + when + ")",
+        "Hi " + first + ",\n\nJust a reminder of our call " + due.label + ", " + when + " (Windhoek time)." +
+        (meet ? "\n\nJoin here: " + meet : "\n\nThe join link is in your calendar invite.") +
+        "\n\nIf the time no longer works, reply to this email or message me on WhatsApp: https://wa.me/264816780891\n\nDino\nAgentFlow",
+        { name: "Dino from AgentFlow" });
+    }
+
+    const hook = props.getProperty("DISCORD_WEBHOOK");
+    if (hook) {
+      const msg = "Hi " + first + ", it's Dino from AgentFlow. Just a reminder of our call " +
+        (due.key === "r24" ? "tomorrow at " + timeOnly : "at " + timeOnly + " today") +
+        (meet ? ". Here's the link: " + meet : ".") + " See you then!";
+      const phone = String(lead.phone || "").replace(/[^\d]/g, "");
+      const wa = phone ? "[Send WhatsApp reminder](https://wa.me/" + phone + "?text=" + encodeURIComponent(msg) + ")" : "No phone number on file. Email reminder sent.";
+      UrlFetchApp.fetch(hook, {
+        method: "post", contentType: "application/json", muteHttpExceptions: true,
+        payload: JSON.stringify({
+          username: "AgentFlow Leads", allowed_mentions: { parse: [] },
+          embeds: [{ title: "⏰ Call " + due.label + ": " + (lead.name || guest), description: when + "\n" + wa, color: 0x7c3aed }],
+        }),
+      });
+    }
+  });
+}
+
+function leadByEmail_(email) {
+  const sh = sheet_();
+  const n = sh.getLastRow() - 1;
+  if (n < 1) return {};
+  const rows = sh.getRange(2, 1, n, HEADERS.length).getValues();
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (String(rows[i][col_("Email") - 1]).trim().toLowerCase() === email) {
+      return { name: rows[i][col_("Name") - 1], phone: rows[i][col_("Phone") - 1] };
+    }
+  }
+  return {};
+}
