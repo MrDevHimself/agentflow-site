@@ -211,7 +211,7 @@ function sendReminders() {
       MailApp.sendEmail(guest, "Reminder: your AgentFlow call " + due.label + " (" + when + ")",
         "Hi " + first + ",\n\nJust a reminder of our call " + due.label + ", " + when + " (Windhoek time)." +
         (meet ? "\n\nJoin here: " + meet : "\n\nThe join link is in your calendar invite.") +
-        "\n\nIf the time no longer works, reply to this email or message me on WhatsApp: https://wa.me/264816780891\n\nDino\nAgentFlow",
+        "\n\nIf the time no longer works, reply to this email or message me on WhatsApp: https://wa.me/264818226779\n\nDino\nAgentFlow",
         { name: "Dino from AgentFlow" });
     }
 
