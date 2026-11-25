@@ -23,12 +23,16 @@ const HEADERS = [
   "Session", "Started", "Last update", "Status", "Stopped at",
   "Name", "Phone", "Email", "Profile link", "Agency and areas",
   "Listings (6 months)", "Where listings come from", "OK with N$1,500 ad spend",
-  "Notified", "Follow-up notes",
+  "Notified", "Follow-up notes", "Role", "Town",
 ];
+// Shown in alerts and emails, in this order.
+const SUMMARY = ["Status", "Stopped at", "Name", "Phone", "Email", "Role", "Town", "Agency and areas",
+  "Listings (6 months)", "OK with N$1,500 ad spend", "Profile link"];
 const FIELDS = {
   name: "Name", phone: "Phone", email: "Email", profile: "Profile link",
   agency: "Agency and areas", listings: "Listings (6 months)",
   source: "Where listings come from", adspend: "OK with N$1,500 ad spend",
+  role: "Role", town: "Town",
 };
 const STATUS_RANK = { "Started": 0, "Not yet eligible": 1, "Form done": 2, "Booked": 3 };
 
@@ -40,6 +44,9 @@ function sheet_() {
     sh.appendRow(HEADERS);
     sh.setFrozenRows(1);
     sh.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
+  }
+  if (sh.getLastColumn() < HEADERS.length) {
+    sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight("bold");
   }
   return sh;
 }
@@ -93,7 +100,7 @@ function out_(s) { return ContentService.createTextOutput(s); }
 function rowText_(row) {
   const sh = sheet_();
   const v = sh.getRange(row, 1, 1, HEADERS.length).getValues()[0];
-  return HEADERS.slice(3, 13).map(function (h, i) { return h + ": " + (v[i + 3] || "-"); }).join("\n");
+  return SUMMARY.map(function (h) { return h + ": " + (v[col_(h) - 1] || "-"); }).join("\n");
 }
 
 // Where alerts go. Set DISCORD_WEBHOOK in Project Settings > Script properties,
@@ -116,8 +123,8 @@ function alert_(row, what) {
 
   const hook = PropertiesService.getScriptProperties().getProperty("DISCORD_WEBHOOK");
   if (hook) {
-    const fields = HEADERS.slice(5, 13)
-      .map(function (h) { return { name: h, value: (get(h) || "–").slice(0, 1000), inline: h !== "Agency and areas" && h !== "Where listings come from" }; });
+    const fields = SUMMARY.slice(2)
+      .map(function (h) { return { name: h, value: (get(h) || "–").slice(0, 1000), inline: h !== "Agency and areas" && h !== "Profile link" }; });
     const phone = get("Phone").replace(/[^\d]/g, "");
     let desc = "[Open the sheet](" + sheetUrl + ")";
     if (phone) desc = "[WhatsApp them](https://wa.me/" + phone + ") · " + desc;
@@ -161,7 +168,8 @@ function checkStalled() {
 function testDiscord() {
   const sh = sheet_();
   sh.appendRow(["test-" + Date.now(), new Date(), new Date(), "Form done", "Finished", "Test Agent", "+264811234567",
-    "test@example.com", "property24.com.na", "Test Realty, Klein Windhoek", "3 to 5", "Referrals", "Yes", "", "Test row, delete me"]);
+    "test@example.com", "property24.com.na", "Test Realty, Klein Windhoek", "3 to 5", "", "Yes", "", "Test row, delete me",
+    "Agent at an agency", "Windhoek"]);
   alert_(sh.getLastRow(), "Form done");
 }
 

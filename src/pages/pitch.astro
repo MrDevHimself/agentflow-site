@@ -4,7 +4,7 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
 import { offer } from "../offer";
-import { LEAD_LOG_URL, CALENDLY_URL, GOOGLE_BOOKING_URL, LISTINGS_OPTIONS, NOT_YET } from "../booking";
+import { LEAD_LOG_URL, CALENDLY_URL, GOOGLE_BOOKING_URL, LISTINGS_OPTIONS, NOT_YET, TOWNS } from "../booking";
 
 const whatsapp = `https://wa.me/264818226779?text=${encodeURIComponent("Hey there, just booked a strategy call, looking forward to it.")}`;
 const whatsappNotYet = `https://wa.me/264818226779?text=${encodeURIComponent("Hi, I'd like to hear when AgentFlow opens up to more agents.")}`;
@@ -26,33 +26,60 @@ const usesCalendly = CALENDLY_URL !== "";
     </div>
 
     <p class="step">2. Check you qualify</p>
-    <p class="note">We work with established agents: at least 3 listings taken on in the last 6 months. It takes about a minute.</p>
+    <p class="note">We work with established agents in Windhoek and at the coast: at least 3 listings taken on in the last 6 months. Three quick steps, about a minute.</p>
 
     <form id="qualify" class="form" novalidate data-log={LEAD_LOG_URL} data-notyet={NOT_YET}>
-      <div class="row2">
+      <div class="progress" aria-live="polite">
+        <span>Step <b id="stepn">1</b> of 3</span>
+        <div class="pbar"><i id="pfill"></i></div>
+      </div>
+
+      <div class="pane" data-pane="1">
         <label>Your name<input name="name" autocomplete="name" required /></label>
         <label>Mobile number (WhatsApp)<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required /></label>
+        <div class="nav"><button class="btn" type="button" data-next>Next</button></div>
       </div>
-      <label>Email<input name="email" type="email" autocomplete="email" required /></label>
-      <label>Link to your agent profile<span class="hint">Property24, HouseFinder or your agency's website</span><input name="profile" inputmode="url" autocapitalize="off" placeholder="e.g. property24.com.na/agent/your-name" required /></label>
-      <label>Which agency are you with, and which areas do you mainly sell in?<input name="agency" required /></label>
-      <label>How many listings have you taken on in the last 6 months?
-        <select name="listings" required>
-          <option value="">Choose one</option>
-          {LISTINGS_OPTIONS.map((o) => <option>{o}</option>)}
-        </select>
-      </label>
-      <label><span>Where do most of your listings come from right now? <span class="opt">(optional)</span></span><span class="hint">For example referrals, past clients, boards, portals or ads</span><input name="source" /></label>
-      <fieldset>
-        <legend>The 30-day trial has no service fee, but the ads cost N$1,500, paid directly to Facebook. Is that OK for you?</legend>
-        <div class="choices">
-          <label class="choice"><input type="radio" name="adspend" value="Yes" required /> Yes</label>
-          <label class="choice"><input type="radio" name="adspend" value="No" /> No</label>
-          <label class="choice"><input type="radio" name="adspend" value="Want to discuss" /> Want to discuss</label>
-        </div>
-      </fieldset>
+
+      <div class="pane" data-pane="2" hidden>
+        <fieldset>
+          <legend>Your role</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="role" value="Principal or agency owner" required /> Principal or agency owner</label>
+            <label class="choice"><input type="radio" name="role" value="Agent at an agency" /> Agent at an agency</label>
+            <label class="choice"><input type="radio" name="role" value="Independent agent" /> Independent agent</label>
+          </div>
+        </fieldset>
+        <label>Where do you mainly sell?
+          <select name="town" required>
+            <option value="">Choose one</option>
+            {TOWNS.map((t) => <option>{t}</option>)}
+          </select>
+        </label>
+        <label>Your agency, and the areas or suburbs you cover<input name="agency" placeholder="e.g. Example Realty, Klein Windhoek and Eros" required /></label>
+        <label>How many listings have you taken on in the last 6 months?
+          <select name="listings" required>
+            <option value="">Choose one</option>
+            {LISTINGS_OPTIONS.map((o) => <option>{o}</option>)}
+          </select>
+        </label>
+        <div class="nav"><button class="back" type="button" data-back>Back</button><button class="btn" type="button" data-next>Next</button></div>
+      </div>
+
+      <div class="pane" data-pane="3" hidden>
+        <fieldset>
+          <legend>The 30-day trial has no service fee, but the ads cost N$1,500, paid directly to Facebook. Is that OK for you?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="adspend" value="Yes" required /> Yes</label>
+            <label class="choice"><input type="radio" name="adspend" value="No" /> No</label>
+            <label class="choice"><input type="radio" name="adspend" value="Want to discuss" /> Want to discuss</label>
+          </div>
+        </fieldset>
+        <label>Email<span class="hint">For your call invite</span><input name="email" type="email" autocomplete="email" required /></label>
+        <label><span>Link to your agent profile <span class="opt">(optional)</span></span><span class="hint">Property24, HouseFinder, your agency's website or Facebook page</span><input name="profile" inputmode="url" autocapitalize="off" /></label>
+        <div class="nav"><button class="back" type="button" data-back>Back</button><button class="btn" type="submit">Pick a time</button></div>
+      </div>
+
       <p class="err" id="err" role="alert" hidden>Please fill in the fields marked in red.</p>
-      <button class="btn" type="submit">Continue to pick a time</button>
       <p class="fine">Your answers save as you go, so we can follow up if something goes wrong. See our <a href="/privacy">privacy policy</a>.</p>
     </form>
 
@@ -93,10 +120,12 @@ const usesCalendly = CALENDLY_URL !== "";
   const logUrl = form.dataset.log || "";
   const notYet = form.dataset.notyet || "";
   const labels: Record<string, string> = {
-    name: "Name", phone: "Mobile number", email: "Email", profile: "Profile link",
-    agency: "Agency and areas", listings: "Listings in 6 months", source: "Where listings come from",
-    adspend: "Ad spend question",
+    name: "Name", phone: "Mobile number", role: "Role", town: "Town",
+    agency: "Agency and areas", listings: "Listings in 6 months",
+    adspend: "Ad spend question", email: "Email", profile: "Profile link",
   };
+  const panes = Array.from(form.querySelectorAll<HTMLElement>(".pane"));
+  const err = document.getElementById("err")!;
 
   let sid = "";
   try { sid = sessionStorage.getItem("af_sid") || ""; } catch {}
@@ -105,6 +134,7 @@ const usesCalendly = CALENDLY_URL !== "";
     try { sessionStorage.setItem("af_sid", sid); } catch {}
   }
 
+  let step = 1;
   let at = "";
   let status = "Started";
   let timer: number | undefined;
@@ -116,14 +146,10 @@ const usesCalendly = CALENDLY_URL !== "";
     return out;
   }
 
-  function hasAnything(v: Record<string, string>) {
-    return Object.values(v).some((x) => x !== "");
-  }
-
   function send() {
     if (!logUrl) return;
     const v = values();
-    if (!hasAnything(v) && status === "Started") return;
+    if (!Object.values(v).some((x) => x !== "") && status === "Started") return;
     const body = JSON.stringify({ sid, values: v, at, status });
     // text/plain keeps this a "simple" request, so Google's web app accepts it.
     fetch(logUrl, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain" }, body }).catch(() => {});
@@ -142,40 +168,62 @@ const usesCalendly = CALENDLY_URL !== "";
   form.addEventListener("change", later);
   addEventListener("pagehide", () => { clearTimeout(timer); send(); });
 
-  function check() {
+  function checkPane(pane: HTMLElement) {
     let ok = true;
-    form.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[required]").forEach((el) => {
-      const field = el instanceof HTMLInputElement && el.type === "radio" ? el.closest("fieldset") : el.closest("label");
-      let valid = el.checkValidity();
-      if (el.name === "profile") valid = /\w+\.\w+/.test(el.value);
-      if (el instanceof HTMLInputElement && el.type === "radio") valid = !!form.querySelector(`input[name="${el.name}"]:checked`);
+    pane.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[required]").forEach((el) => {
+      const isRadio = el instanceof HTMLInputElement && el.type === "radio";
+      const field = isRadio ? el.closest("fieldset") : el.closest("label");
+      let valid = isRadio ? !!form.querySelector(`input[name="${el.name}"]:checked`) : el.checkValidity();
       field?.classList.toggle("bad", !valid);
       if (!valid) ok = false;
     });
+    const profile = pane.querySelector<HTMLInputElement>('[name="profile"]');
+    if (profile && profile.value.trim() && !/\w+\.\w+/.test(profile.value)) {
+      profile.closest("label")?.classList.add("bad");
+      ok = false;
+    } else profile?.closest("label")?.classList.remove("bad");
+    err.hidden = ok;
+    if (!ok) pane.querySelector<HTMLElement>(".bad input, .bad select")?.focus();
     return ok;
   }
 
+  function show(n: number) {
+    step = n;
+    panes.forEach((p) => (p.hidden = Number(p.dataset.pane) !== n));
+    document.getElementById("stepn")!.textContent = String(n);
+    (document.getElementById("pfill") as HTMLElement).style.width = `${(n / 3) * 100}%`;
+    err.hidden = true;
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    panes[n - 1].querySelector<HTMLElement>("input, select")?.focus({ preventScroll: true });
+  }
+
+  function notYetEligible() {
+    status = "Not yet eligible";
+    at = "Finished";
+    send();
+    form.hidden = true;
+    document.getElementById("notyet")!.hidden = false;
+  }
+
+  form.querySelectorAll("[data-next]").forEach((b) => b.addEventListener("click", () => {
+    const pane = panes[step - 1];
+    if (!checkPane(pane)) return;
+    clearTimeout(timer);
+    at = `Step ${step + 1}`;
+    send();
+    if (step === 2 && values().listings === notYet) return notYetEligible();
+    show(step + 1);
+  }));
+  form.querySelectorAll("[data-back]").forEach((b) => b.addEventListener("click", () => show(step - 1)));
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const err = document.getElementById("err")!;
-    if (!check()) {
-      err.hidden = false;
-      form.querySelector<HTMLElement>(".bad input, .bad select")?.focus();
-      return;
-    }
-    err.hidden = true;
+    if (step < 3) { (form.querySelector(`[data-pane="${step}"] [data-next]`) as HTMLElement)?.click(); return; }
+    if (!checkPane(panes[2])) return;
     const v = values();
     at = "Finished";
-
-    if (v.listings === notYet) {
-      status = "Not yet eligible";
-      send();
-      form.hidden = true;
-      document.getElementById("notyet")!.hidden = false;
-      return;
-    }
-
     status = "Form done";
+    clearTimeout(timer);
     send();
     form.hidden = true;
     const frame = document.getElementById("cal") as HTMLIFrameElement;
@@ -235,7 +283,13 @@ const usesCalendly = CALENDLY_URL !== "";
   .bad input:not([type="radio"]), .bad select { border-color: var(--red); }
   .bad legend, fieldset.bad .choice { color: var(--red); border-color: var(--red); }
   .err { color: var(--red); font-weight: 600; margin: 0; }
-  .form button { justify-self: start; border: 0; font: inherit; font-weight: 700; cursor: pointer; }
+  .form button { border: 0; font: inherit; font-weight: 700; cursor: pointer; }
+  .pane { display: grid; gap: 18px; }
+  .nav { display: flex; gap: 12px; align-items: center; }
+  .back { background: none; color: var(--grey); padding: 12px 4px; text-decoration: underline; text-underline-offset: 3px; }
+  .progress { display: grid; gap: 8px; font-size: .9rem; color: var(--grey); }
+  .pbar { height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .pbar i { display: block; height: 100%; width: 33.34%; background: var(--ink); transition: width .25s ease; }
   .form .fine { margin-top: 0; }
 
   .notyet { border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 4vw, 32px); margin-bottom: 56px; display: grid; gap: 12px; }

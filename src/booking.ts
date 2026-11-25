@@ -14,3 +14,6 @@ export const GOOGLE_BOOKING_URL =
 // Agents below this many listings in the last 6 months aren't offered a call.
 export const LISTINGS_OPTIONS = ["0 to 2", "3 to 5", "6 to 10", "More than 10"];
 export const NOT_YET = "0 to 2";
+
+// Towns we take agents in. Agents pick one on the booking form.
+export const TOWNS = ["Windhoek", "Swakopmund", "Walvis Bay", "Somewhere else in Namibia"];
